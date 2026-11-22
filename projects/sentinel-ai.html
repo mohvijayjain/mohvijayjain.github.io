@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentinel-AI · Mohvijay Jain</title>
+<meta name="description" content="Sentinel-AI: a self-healing ML monitoring and retraining platform with gated promotion and a RAG assistant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="logo" href="../index.html">mohvijay<span class="mark">.dev</span></a>
+    <div class="nav-links">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#contact">Contact</a>
+      <a class="btn btn-sm" href="../assets/Mohvijay_Jain_Resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+    </div>
+  </nav>
+
+  <header class="case-hero">
+    <a class="back" href="../index.html#work">← All projects</a>
+    <span class="tag" style="align-self:flex-start">FEATURED · MLOPS · JUN–OCT 2026</span>
+    <h1>Sentinel-AI: a model that <span class="mark">heals itself</span></h1>
+    <p class="lead">Models degrade silently when the world changes. Sentinel-AI closes the loop: detect drift, decide, retrain a challenger, prove it's better, promote it, and explain every step in plain language.</p>
+    <div class="actions">
+      <a class="btn btn-dark" href="https://github.com/mohvijayjain/Sentinel-AI" target="_blank" rel="noopener">View code</a>
+    </div>
+  </header>
+
+  <section class="stats" aria-label="Results">
+    <div class="stat"><b>0.86</b><span>R² (RMSE ≈ 336 s)</span></div>
+    <div class="stat"><b>7.2M</b><span>reference rows</span></div>
+    <div class="stat"><b>4</b><span>promotion gates</span></div>
+    <div class="stat"><b>40s → 1s</b><span>assistant latency</span></div>
+  </section>
+
+  <article class="prose">
+    <h2>The setup</h2>
+    <p>The served model is a LightGBM regressor predicting NYC yellow-taxi trip duration from 11 features, trained on public NYC TLC trip records. New monthly data is checked against a 7.27M-row reference set, and challengers are judged on a fixed 200,000-row frozen test set.</p>
+
+    <h2>The self-healing loop</h2>
+    <ol class="pipeline">
+      <li><b>Detect drift, three ways</b><span>Statistical (PSI, KS, JS, Wasserstein), SHAP drift (change in mean |SHAP| per feature) and prediction drift (output distribution).</span></li>
+      <li><b>Score &amp; decide</b><span>Combined score = 0.4 · statistical + 0.3 · SHAP + 0.3 · prediction → WAIT, MONITOR, ALERT or RETRAIN (≥ 0.75).</span></li>
+      <li><b>Retrain a challenger</b><span>Triggered in the background; every run tracked in MLflow.</span></li>
+      <li><b>Four validation gates</b><span>Metric (RMSE ≥ 1% better, MAE and R² no worse) · paired bootstrap, 1,000 iterations, 95% CI · segment gate (no airport or top zone more than 10% worse) · recent-data sanity check.</span></li>
+      <li><b>Promote or reject</b><span>Pass all four and the MLflow "Champion" alias moves; fail any and the champion stays. Every attempt is written to PostgreSQL.</span></li>
+      <li><b>Explain</b><span>Each run is indexed into ChromaDB so a RAG assistant can answer "why did this retrain get rejected?" with cited sources.</span></li>
+    </ol>
+
+    <h2>The 40-second bug</h2>
+    <p>The assistant (NVIDIA Nemotron, top-5 retrieval with a 0.85 cosine-distance cutoff) was returning errors on <code>/chat</code>. The cause: the model's reasoning mode added 1,200–1,800 hidden tokens per answer, pushing responses to 39–46 seconds, past the 25-second timeout. Turning reasoning off for this grounded, retrieval-only task brought answers to about 1–2 seconds. Tests now pin that setting and the bounded timeout-and-retry behaviour.</p>
+
+    <h2>Engineering decisions</h2>
+    <ul>
+      <li><b>A segment gate.</b> A better average can hide a broken JFK or LaGuardia segment; the gate blocks that.</li>
+      <li><b>Calibrated relevance cutoff.</b> The 0.85 distance threshold came from measured distances: relevant 0.35–0.72, off-topic 0.93–1.04.</li>
+      <li><b>Safe stop.</b> A stop flag is checked between stages, with a final check before any database write, so a cancelled run saves nothing.</li>
+      <li><b>Honest outcomes.</b> So far the gates have rejected challengers (347.6 s vs 326.6 s error), which is the system doing its job.</li>
+    </ul>
+
+    <h2>API &amp; deployment</h2>
+    <p>14 FastAPI routes: prediction, model info, monitoring history, drifted features, retraining events, CSV/Parquet upload runs, <code>/chat</code> and Prometheus <code>/metrics</code>. A React + TypeScript dashboard (Recharts, TanStack Query) sits on top. It runs on one AWS EC2 instance with Docker Compose (API, PostgreSQL, MLflow, Caddy): only Caddy is exposed, with automatic HTTPS, and it injects the API key so it never reaches the browser. Around 40 pytest test files cover the pipeline.</p>
+
+    <h2>Stack</h2>
+    <ul class="chips"><li>Python</li><li>LightGBM</li><li>SHAP</li><li>MLflow</li><li>FastAPI</li><li>PostgreSQL</li><li>ChromaDB</li><li>NVIDIA Nemotron</li><li>React</li><li>Docker</li><li>Caddy</li><li>AWS EC2</li></ul>
+  </article>
+
+  <footer class="cta">
+    <h2>Want the details?</h2>
+    <a href="mailto:mohvijayjain12@gmail.com">mohvijayjain12@gmail.com</a>
+  </footer>
+</div>
+</body>
+</html>

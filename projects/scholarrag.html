@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScholarRAG · Mohvijay Jain</title>
+<meta name="description" content="ScholarRAG: a RAG system over research papers with hybrid retrieval, reranking and RAGAS evaluation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="logo" href="../index.html">mohvijay<span class="mark">.dev</span></a>
+    <div class="nav-links">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#contact">Contact</a>
+      <a class="btn btn-sm" href="../assets/Mohvijay_Jain_Resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+    </div>
+  </nav>
+
+  <header class="case-hero">
+    <a class="back" href="../index.html#work">← All projects</a>
+    <span class="tag" style="align-self:flex-start">FEATURED · RAG · AUG 2026</span>
+    <h1>ScholarRAG: <span class="mark">measuring</span> what a RAG system gets right</h1>
+    <p class="lead">A question-answering assistant for research papers, built with an evaluation framework from day one: retrieval and answer quality are scored separately on a hand-written question set.</p>
+    <div class="actions">
+      <a class="btn btn-dark" href="https://github.com/mohvijayjain/ScholarRAG" target="_blank" rel="noopener">View code</a>
+    </div>
+  </header>
+
+  <section class="stats" aria-label="Results">
+    <div class="stat"><b>0.80</b><span>faithfulness</span></div>
+    <div class="stat"><b>0.71</b><span>context precision</span></div>
+    <div class="stat"><b>0.70</b><span>context recall</span></div>
+    <div class="stat"><b>98</b><span>questions scored (RAGAS)</span></div>
+  </section>
+
+  <article class="prose">
+    <h2>The problem</h2>
+    <p>Asking an LLM about papers gets you confident answers with no way to check them. I wanted answers grounded only in the uploaded PDFs, with the paper, section and page for every claim, and numbers that show how often retrieval and generation actually work.</p>
+
+    <h2>How it works</h2>
+    <ol class="pipeline">
+      <li><b>Ingest</b><span>PDFs parsed to Markdown with PyMuPDF4LLM. References, acknowledgements and appendices are cut before chunking, and the last heading is carried across pages so every chunk knows its section.</span></li>
+      <li><b>Chunk &amp; index</b><span>Recursive splitting on Markdown headings (1,000 chars, 300 overlap), embedded with BAAI/bge-small-en-v1.5 into ChromaDB.</span></li>
+      <li><b>Hybrid retrieve</b><span>Ensemble of vector search (MMR, k=15) and BM25 (k=15), weighted 60 / 40, filtered to the documents the user selects.</span></li>
+      <li><b>Rerank</b><span>BAAI/bge-reranker-base cross-encoder keeps the top 4 chunks.</span></li>
+      <li><b>Generate</b><span>Llama 3.1 70B on NVIDIA NIM (temperature 0.2) answers only from those chunks, cites paper and section, and says it could not find the answer when the context doesn't contain it.</span></li>
+    </ol>
+
+    <h2>Evaluation</h2>
+    <p>I wrote 100 questions with reference answers across 19 ML/RAG papers (Attention, BERT, DPR, RAG, LoRA, Self-RAG, ReAct and others), tagged by type: concept, architecture, implementation, comparison and evaluation. RAGAS scores them with Llama 3.1 70B as the judge.</p>
+    <table class="results">
+      <thead><tr><th>Metric</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td>Faithfulness</td><td>0.80</td></tr>
+        <tr><td>Context precision</td><td>0.71</td></tr>
+        <tr><td>Context recall</td><td>0.70</td></tr>
+        <tr><td>Answer relevancy</td><td>0.52</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Honest caveat: on the free NIM tier the judge model timed out on some rows, so not every metric was scored on all 98 questions. Answer relevancy is the weakest score and the next thing I'm working on.</p>
+
+    <h2>Engineering decisions</h2>
+    <ul>
+      <li><b>Section-aware metadata.</b> Carrying headings across page breaks is what makes "paper + section + page" citations possible.</li>
+      <li><b>Cleaning before chunking.</b> Dropping reference lists removed a big source of noisy, citation-only matches.</li>
+      <li><b>Per-document filters on both retrievers.</b> The hybrid retriever is rebuilt with matching Chroma and BM25 filters, falling back to vector-only when BM25 has nothing to match.</li>
+      <li><b>Built for rate limits.</b> Exponential backoff, batched evaluation with cooldowns, resumable runs and a failed-question log kept a 100-question eval running on a free API tier.</li>
+    </ul>
+
+    <h2>API</h2>
+    <p><code>POST /upload</code> ingest a PDF · <code>GET /documents</code> list indexed papers · <code>POST /chat</code> ask a question, returns answer + sources. A Streamlit UI sits on top.</p>
+
+    <h2>Stack</h2>
+    <ul class="chips"><li>Python</li><li>LangChain</li><li>ChromaDB</li><li>BGE embeddings</li><li>BM25</li><li>BGE reranker</li><li>Llama 3.1 70B</li><li>NVIDIA NIM</li><li>RAGAS</li><li>FastAPI</li><li>Streamlit</li></ul>
+  </article>
+
+  <footer class="cta">
+    <h2>Want the details?</h2>
+    <a href="mailto:mohvijayjain12@gmail.com">mohvijayjain12@gmail.com</a>
+  </footer>
+</div>
+</body>
+</html>

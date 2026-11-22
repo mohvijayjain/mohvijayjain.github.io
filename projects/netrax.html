@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetraX · Mohvijay Jain</title>
+<meta name="description" content="NetraX: diabetic retinopathy screening with a hybrid quantum-classical classifier and Grad-CAM explanations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="logo" href="../index.html">mohvijay<span class="mark">.dev</span></a>
+    <div class="nav-links">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#contact">Contact</a>
+      <a class="btn btn-sm" href="../assets/Mohvijay_Jain_Resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+    </div>
+  </nav>
+
+  <header class="case-hero">
+    <a class="back" href="../index.html#work">← All projects</a>
+    <span class="tag" style="align-self:flex-start">QUANTUM ML · TEAM PROJECT · SIH</span>
+    <h1>NetraX: <span class="mark">quantum-assisted</span> eye screening</h1>
+    <p class="lead">A screening tool for rural primary health centres: an operator uploads fundus photos, NetraX checks image quality, grades diabetic retinopathy on a 0–4 scale, explains the decision with Grad-CAM and routes referrals to an ophthalmologist. My part: the hybrid quantum-classical classifier.</p>
+    <div class="actions">
+      <a class="btn btn-dark" href="https://netrax-indol.vercel.app" target="_blank" rel="noopener">Live app ↗</a>
+      <a class="btn" href="https://github.com/mohvijayjain/NetraX" target="_blank" rel="noopener">View code</a>
+    </div>
+  </header>
+
+  <section class="stats" aria-label="Highlights">
+    <div class="stat"><b>4</b><span>qubits · 4 layers</span></div>
+    <div class="stat"><b>1536 → 4</b><span>DINOv2 features → PCA</span></div>
+    <div class="stat"><b>0–4</b><span>DR grades, ≥2 refers</span></div>
+    <div class="stat"><b>61/561</b><span>Smart India Hackathon</span></div>
+  </section>
+
+  <article class="prose">
+    <h2>My classifier</h2>
+    <ol class="pipeline">
+      <li><b>Features</b><span>A fine-tuned DINOv2-base backbone at 518 px; the CLS token and mean patch token are joined into a 1,536-value vector. The backbone is shared with the classical classifier, so only one model sits in memory.</span></li>
+      <li><b>Compress</b><span>PCA down to 4 components, then standardised, one value per qubit.</span></li>
+      <li><b>Quantum circuit</b><span>PennyLane, 4 qubits: angle embedding → 4 basic entangler layers → Pauli-Z expectation values, wrapped as a PyTorch layer.</span></li>
+      <li><b>Classify &amp; ensemble</b><span>A linear head maps 4 outputs to 5 grades. The final grade comes from whichever model (quantum or DINOv2) is more confident, and disagreements are flagged for review.</span></li>
+    </ol>
+    <p><span class="todo">TODO</span> Add final quadratic-kappa comparison vs the DINOv2 baseline.</p>
+
+    <h2>The rest of the system (team)</h2>
+    <ul>
+      <li><b>Quality checks</b> on sharpness (Laplacian variance), illumination, contrast and resolution before grading.</li>
+      <li><b>Grad-CAM</b> on DINOv2 patch tokens, mapped back through the resize and centre-crop, with percentile scaling so a few hot patches don't wash out the map.</li>
+      <li><b>Clinical workflow:</b> four user roles, reviewer and ophthalmologist queues, a two-page PDF report, Hindi and English UI, and an offline-capable PWA.</li>
+    </ul>
+
+    <h2>Stack</h2>
+    <ul class="chips"><li>PyTorch</li><li>PennyLane</li><li>DINOv2</li><li>Hugging Face Transformers</li><li>scikit-learn</li><li>FastAPI</li><li>React 19</li><li>TypeScript</li><li>Vercel</li><li>Render</li></ul>
+  </article>
+
+  <footer class="cta">
+    <h2>Want the details?</h2>
+    <a href="mailto:mohvijayjain12@gmail.com">mohvijayjain12@gmail.com</a>
+  </footer>
+</div>
+</body>
+</html>

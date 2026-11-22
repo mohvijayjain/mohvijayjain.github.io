@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GeoSight · Mohvijay Jain</title>
+<meta name="description" content="GeoSight: Sentinel-2 land-cover segmentation and road-network extraction.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="logo" href="../index.html">mohvijay<span class="mark">.dev</span></a>
+    <div class="nav-links">
+      <a href="../index.html#work">Work</a>
+      <a href="../index.html#contact">Contact</a>
+      <a class="btn btn-sm" href="../assets/Mohvijay_Jain_Resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+    </div>
+  </nav>
+
+  <header class="case-hero">
+    <a class="back" href="../index.html#work">← All projects</a>
+    <span class="tag" style="align-self:flex-start">COMPUTER VISION · TEAM LEAD · JAN–MAY 2026</span>
+    <h1>GeoSight: reading <span class="mark">land cover</span> from space</h1>
+    <p class="lead">Draw an area on a map (up to ~150 km²) or upload a GeoTIFF. GeoSight pulls a cloud-filtered Sentinel-2 composite, labels every 10 m pixel and extracts the road network as a graph. I led the team and owned research and model training.</p>
+    <div class="actions">
+      <a class="btn btn-dark" href="https://github.com/mohvijayjain/GeoSight" target="_blank" rel="noopener">View code</a>
+    </div>
+  </header>
+
+  <section class="grid-2" aria-label="Example output">
+    <figure style="margin:0"><img src="../assets/geosight-satellite.webp" alt="Sentinel-2 satellite image of a river winding through farmland and villages" width="637" height="484" loading="lazy" style="border:3px solid #0a0a0a"><figcaption class="eyebrow" style="padding-top:8px">Sentinel-2 input</figcaption></figure>
+    <figure style="margin:0"><img src="../assets/geosight-landcover.webp" alt="The same area segmented: green rural land, blue water and grey urban patches" width="637" height="484" loading="lazy" style="border:3px solid #0a0a0a"><figcaption class="eyebrow" style="padding-top:8px">Predicted land cover · rural / water / urban</figcaption></figure>
+  </section>
+
+  <article class="prose">
+    <h2>Data</h2>
+    <p>69,614 Sentinel-2 tiles using six bands (B2, B3, B4, B8, B11, B12) across Uttarakhand, Haryana, Sikkim, Delhi and Kanpur. With no hand-labelled masks available, labels were generated semi-automatically from NDVI, NDWI and NDBI, with thresholds tuned separately for each region.</p>
+
+    <h2>Model</h2>
+    <ol class="pipeline">
+      <li><b>Experiments</b><span>Started with LinkNet (ResNet-50 encoder), then moved to a stronger architecture for six-band input.</span></li>
+      <li><b>Deployed land-cover model</b><span>U-Net++ with an EfficientNet-B4 encoder, 6 input bands, 4 classes (background, rural, urban, water). Dice + Focal loss, AdamW, mixed precision, flips/rotations/affine augmentation.</span></li>
+      <li><b>Road model</b><span>A separate U-Net (ResNet-50) on RGB detects roads.</span></li>
+      <li><b>Checkpoint selection</b><span>Without ground truth, 28 saved epochs were compared on class-coverage quality across regions to choose the deployed checkpoint.</span></li>
+    </ol>
+    <p><span class="todo">TODO</span> Add validated accuracy / mIoU once confirmed.</p>
+
+    <h2>From pixels to a road graph</h2>
+    <p>Urban masks are turned into a graph you can route on: morphological cleaning, a Frangi ridge filter with scales derived from real road widths (20 / 35 / 55 m at 10 m per pixel), skeletonisation, conversion to a networkx graph, and pruning of dead-end stubs shorter than 150 m. Each tile then passes a quality gate on connectivity (≥ 0.70), road density (≥ 500 m/km²) and dead-end ratio (≤ 0.35).</p>
+
+    <h2>The app</h2>
+    <p>React + Leaflet front end with a Flask API backed by PyTorch and Google Earth Engine: fetch and classify an area, detect roads, classify an uploaded GeoTIFF and download the results. It shows class percentages, confidence and a four-panel view (image, raw prediction, filtered prediction, overlay).</p>
+
+    <h2>Stack</h2>
+    <ul class="chips"><li>PyTorch</li><li>segmentation-models-pytorch</li><li>U-Net++</li><li>Google Earth Engine</li><li>scikit-image</li><li>networkx</li><li>Flask</li><li>React</li><li>Leaflet</li></ul>
+  </article>
+
+  <footer class="cta">
+    <h2>Want the details?</h2>
+    <a href="mailto:mohvijayjain12@gmail.com">mohvijayjain12@gmail.com</a>
+  </footer>
+</div>
+</body>
+</html>

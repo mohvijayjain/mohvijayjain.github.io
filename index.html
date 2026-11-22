@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mohvijay Jain · AI Engineer</title>
+<meta name="description" content="Mohvijay Jain — AI engineer building RAG systems, LLM evaluation and self-healing ML pipelines.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="logo" href="index.html">mohvijay<span class="mark">.dev</span></a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+      <a class="btn btn-sm" href="assets/Mohvijay_Jain_Resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <span class="eyebrow">AI Engineer · B.Tech CSE (Data Science), Bennett University</span>
+    <h1>I build <span class="mark">RAG systems</span> that are measured, not just demoed.</h1>
+    <p class="lead">Hybrid retrieval, rerankers and RAGAS evaluation. Self-healing ML pipelines deployed on AWS. Currently an ML Research Intern at Yoga Flow.</p>
+    <div class="actions">
+      <a class="btn btn-dark" href="#work">See projects</a>
+      <a class="btn" href="https://github.com/mohvijayjain" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://www.linkedin.com/in/mohvijayjn/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </header>
+
+  <section class="stats" aria-label="Highlights">
+    <div class="stat"><b>0.80</b><span>RAGAS faithfulness · ScholarRAG</span></div>
+    <div class="stat"><b>40s → 1s</b><span>RAG latency fix · Sentinel-AI</span></div>
+    <div class="stat"><b>7.2M</b><span>reference rows monitored · Sentinel-AI</span></div>
+    <div class="stat"><b>69.6k</b><span>satellite tiles · GeoSight</span></div>
+  </section>
+
+  <section id="work" class="section">
+    <h2>Selected work</h2>
+    <div class="stack">
+      <article class="card-feature">
+        <div class="card-head"><h3>ScholarRAG</h3><span class="tag">FEATURED · RAG</span></div>
+        <p>Question answering over research papers, with an evaluation framework built alongside it. Hybrid retrieval (60% vector + 40% BM25), a BGE cross-encoder reranker, and Llama 3.1 70B answers that cite paper, section and page.</p>
+        <div class="metrics">
+          <div><b>0.80</b> <span>faithfulness</span></div>
+          <div><b>0.71</b> <span>context precision</span></div>
+          <div><b>0.70</b> <span>context recall</span></div>
+        </div>
+        <ul class="chips"><li>LangChain</li><li>ChromaDB</li><li>BGE</li><li>BM25</li><li>RAGAS</li><li>NVIDIA NIM</li><li>FastAPI</li></ul>
+        <a class="more" href="projects/scholarrag.html">Read case study →</a>
+      </article>
+
+      <article class="card-feature">
+        <div class="card-head"><h3>Sentinel-AI</h3><span class="tag">FEATURED · MLOPS</span></div>
+        <p>A self-healing ML monitoring platform. Statistical, SHAP and prediction drift are scored together; a challenger model is retrained and promoted only if it passes four validation gates. An LLM RAG assistant explains every decision, cut from 40 seconds to about 1–2.</p>
+        <div class="metrics">
+          <div><b>R² 0.86</b> <span>champion model</span></div>
+          <div><b>4</b> <span>promotion gates</span></div>
+          <div><b>~1–2s</b> <span>assistant answers</span></div>
+        </div>
+        <ul class="chips"><li>LightGBM</li><li>SHAP</li><li>MLflow</li><li>FastAPI</li><li>PostgreSQL</li><li>Docker</li><li>AWS EC2</li></ul>
+        <a class="more" href="projects/sentinel-ai.html">Read case study →</a>
+      </article>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>GeoSight</h3>
+          <p>Six-band Sentinel-2 land-cover segmentation on 69,600+ tiles, with road networks extracted into graphs. Led the team and owned model training.</p>
+          <a class="more" href="projects/geosight.html">Case study →</a>
+        </article>
+        <article class="card">
+          <h3>NetraX</h3>
+          <p>Diabetic retinopathy screening for rural clinics. I built the 4-qubit hybrid quantum-classical classifier on DINOv2 features.</p>
+          <a class="more" href="projects/netrax.html">Case study →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" class="row">
+    <div>
+      <h2>Machine Learning Research Intern</h2>
+      <p>Yoga Flow · Pose estimation for an AI posture-correction platform. Curating 860+ pose videos, benchmarking architectures, optimising real-time inference.</p>
+    </div>
+    <span class="eyebrow">Nov 2026 – Present</span>
+  </section>
+
+  <section class="row" aria-labelledby="skills-h">
+    <div style="width:100%">
+      <h2 id="skills-h">Skills</h2>
+      <dl class="skills">
+        <dt>LLM / GenAI</dt><dd>RAG, hybrid retrieval, rerankers, RAGAS evaluation, LangChain, ChromaDB</dd>
+        <dt>ML / DL</dt><dd>PyTorch, scikit-learn, LightGBM, SHAP, MLflow, drift detection</dd>
+        <dt>Backend</dt><dd>FastAPI, REST APIs, Pydantic, PostgreSQL, pytest</dd>
+        <dt>Cloud &amp; tools</dt><dd>AWS (EC2) · AWS Certified Cloud Practitioner, Docker, Git</dd>
+        <dt>Languages</dt><dd>Python, C++, Java, SQL</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="row" aria-labelledby="ach-h">
+    <div style="width:100%">
+      <h2 id="ach-h">Recognition</h2>
+      <p>Perplexity Campus Partner (Fall 2025) · McKinsey.org Forward Program (2026) · Smart India Hackathon inter-college round, rank 61/561 (NetraX)</p>
+    </div>
+  </section>
+
+  <footer id="contact" class="cta">
+    <h2>Open to AI Engineer internships.</h2>
+    <a href="mailto:mohvijayjain12@gmail.com">mohvijayjain12@gmail.com</a>
+  </footer>
+</div>
+</body>
+</html>
